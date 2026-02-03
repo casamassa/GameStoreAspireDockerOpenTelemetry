@@ -1,0 +1,30 @@
+###
+GET http://localhost:5000/games
+
+###
+GET http://localhost:5000/games/1
+
+###
+POST http://localhost:5000/games
+Content-Type: application/json
+
+{
+    "name": "The Legend of Zelda: Breath of the Wild",
+    "genreId": 5,
+    "price": 59.99,
+    "releaseDate": "2017-03-03"
+}
+
+###
+PUT http://localhost:5000/games/3
+Content-Type: application/json
+
+{
+    "name": "Minecraft Second Edition",
+    "genreId": 1,
+    "price": 30.99,
+    "releaseDate": "2011-11-18"
+}
+
+###
+DELETE http://localhost:5000/games/3

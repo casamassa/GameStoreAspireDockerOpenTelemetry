@@ -1,0 +1,5 @@
+### Usar para Docker
+GET http://localhost:5000/genres
+
+### Usar para Aspire
+GET http://localhost:5239/genres

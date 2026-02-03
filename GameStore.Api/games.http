@@ -1,0 +1,38 @@
+@HostAddress = localhost:5239
+
+###
+GET {{HostAddress}}/games
+
+###
+GET {{HostAddress}}/games/1
+
+###
+POST {{HostAddress}}/games
+Content-Type: application/json
+
+{
+    "name": "The Legend of Zelda: Breath of the Wild",
+    "genreId": 5,
+    "price": 59.99,
+    "releaseDate": "2017-03-03"
+}
+
+###
+PUT {{HostAddress}}/games/3
+Content-Type: application/json
+
+{
+    "name": "Minecraft Second Edition",
+    "genreId": 1,
+    "price": 30.99,
+    "releaseDate": "2011-11-18"
+}
+
+###
+DELETE {{HostAddress}}/games/3
+
+###
+GET {{HostAddress}}/alive
+
+###
+GET {{HostAddress}}/health
