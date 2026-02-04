@@ -4,6 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <DefineConstants>ASPIRE</DefineConstants> <!-- Se for rodar usando ASPIRE deixe essa linha, se for usar Docker comente essa linha -->
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,6 +31,10 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(DefineConstants)' == 'ASPIRE'">
+    <ProjectReference Include="..\GameStore.ServiceDefaults\GameStore.ServiceDefaults.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\GameStore.ServiceDefaults\GameStore.ServiceDefaults.csproj" />
   </ItemGroup>
 
