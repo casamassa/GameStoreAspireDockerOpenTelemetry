@@ -1,410 +1,240 @@
-# \# GameStore – Observabilidade com Aspire e Docker + OpenTelemetry
+# GameStore – Observabilidade com Aspire e Docker + OpenTelemetry
 
-# 
+Este repositório demonstra **duas formas de executar o mesmo projeto .NET com observabilidade completa**:
 
-# Este repositório demonstra \*\*duas formas de executar o mesmo projeto .NET com observabilidade completa\*\*:
+1. **Usando .NET Aspire** (modo mais simples e produtivo)
 
-# 
+2. **Usando Docker Compose + OpenTelemetry** (modo explícito e controlado)
 
-# 1\. \*\*Usando .NET Aspire\*\* (modo mais simples e produtivo)
+A ideia aqui não é escolher um “melhor”, mas **comparar abordagens**, entender **o que o Aspire abstrai** e como montar a **mesma stack manualmente** quando Aspire não está disponível.
 
-# 2\. \*\*Usando Docker Compose + OpenTelemetry\*\* (modo explícito e controlado)
+---
 
-# 
+## 🎯 Objetivo do Projeto
 
-# A ideia aqui não é escolher um “melhor”, mas \*\*comparar abordagens\*\*, entender \*\*o que o Aspire abstrai\*\* e como montar a \*\*mesma stack manualmente\*\* quando Aspire não está disponível.
+- Demonstrar **tracing distribuído**, **métricas** e **logs** em uma aplicação .NET
+- Comparar **Aspire vs Docker Compose** no mesmo código-base
+- Servir como **referência prática** de OpenTelemetry no mundo real
 
-# 
+- Mostrar uma stack moderna de observabilidade usada em produção
 
-# ---
+---
 
-# 
+## 🧰 Tecnologias Utilizadas
 
-# \## 🎯 Objetivo do Projeto
+### Aplicação
 
-# 
+- **.NET 10**
+- **ASP.NET Core Web API**
+- **Entity Framework Core**
+- **PostgreSQL**
+- **Redis**
 
-# \- Demonstrar \*\*tracing distribuído\*\*, \*\*métricas\*\* e \*\*logs\*\* em uma aplicação .NET
+### Observabilidade
 
-# \- Comparar \*\*Aspire vs Docker Compose\*\* no mesmo código-base
+- **OpenTelemetry** (instrumentação e exportação)
+- **Grafana** (visualização)
+- **Grafana Tempo** (Tracing distribuído)
+- **Prometheus** (Métricas) 🚧
+- **Grafana Loki** (Logs) 🚧
 
-# \- Servir como \*\*referência prática\*\* de OpenTelemetry no mundo real
+> ⚠️ **Nota**: atualmente o projeto está com **Tracing totalmente funcional**.
 
-# \- Mostrar uma stack moderna de observabilidade usada em produção
+> As partes de **métricas (Prometheus)** e **logs (Loki)** já estão documentadas e preparadas na stack, mas ainda não instrumentadas na aplicação.
 
-# 
+---
 
-# ---
+## 🧠 Aspire vs Docker Compose (Resumo Rápido)
 
-# 
+| Aspecto         | Aspire           | Docker + OTEL              |
+| --------------- | ---------------- | -------------------------- |
+| Setup inicial   | 🔥 Muito simples | 🧩 Mais verboso            |
+| Observabilidade | Automática       | Manual                     |
+| Controle fino   | Médio            | Alto                       |
+| Infra explícita | Não              | Sim                        |
+| Ideal para      | Dev / POC        | Produção / Estudo profundo |
 
-# \## 🧰 Tecnologias Utilizadas
+---
 
-# 
+## 🚀 Rodando o Projeto com .NET Aspire
 
-# \### Aplicação
+Cetifique-se de que o arquivo GameStore.Api.csproj, contenha a seguinte diretiva:
 
-# \- \*\*.NET 10\*\*
+```bash
+<PropertyGroup>
+    ...
+    <DefineConstants>ASPIRE</DefineConstants>
+</PropertyGroup>
+```
 
-# \- \*\*ASP.NET Core Web API\*\*
+### Pré-requisitos
 
-# \- \*\*Entity Framework Core\*\*
+- .NET SDK 10
+- Docker
+- .NET Aspire workload instalado
 
-# \- \*\*PostgreSQL\*\*
+### Passos
 
-# \- \*\*Redis\*\*
+```bash
+dotnet workload install aspire (Execute apenas senão tiver o Aspire instalado)
 
-# 
+dotnet run --project GameStore.AppHost
+```
 
-# \### Observabilidade
+O Aspire irá:
 
-# \- \*\*OpenTelemetry\*\* (instrumentação e exportação)
+- Subir automaticamente os serviços
+- Configurar observabilidade (traces, metrics e logs)
+- Disponibilizar o **Aspire Dashboard**
 
-# \- \*\*Grafana\*\* (visualização)
+📌 **Nenhuma configuração manual de OpenTelemetry é necessária nesse modo**.
 
-# \- \*\*Grafana Tempo\*\* (Tracing distribuído)
+---
 
-# \- \*\*Prometheus\*\* (Métricas) 🚧
+## 🐳 Rodando o Projeto com Docker Compose + OpenTelemetry
 
-# \- \*\*Grafana Loki\*\* (Logs) 🚧
+Cetifique-se de que o arquivo GameStore.Api.csproj, NÂO contenha a seguinte diretiva, se tiver remova:
 
-# 
+```bash
+<PropertyGroup>
+    ...
+    <DefineConstants>ASPIRE</DefineConstants>
+</PropertyGroup>
+```
 
-# > ⚠️ \*\*Nota\*\*: atualmente o projeto está com \*\*Tracing totalmente funcional\*\*.
+Neste modo, toda a observabilidade é configurada **explicitamente**, sem Aspire.
 
-# > As partes de \*\*métricas (Prometheus)\*\* e \*\*logs (Loki)\*\* já estão documentadas e preparadas na stack, mas ainda não instrumentadas na aplicação.
+### 📌 Passo 0 – Criar a network (executar apenas uma vez)
 
-# 
+Este projeto usa uma **network Docker externa compartilhada** entre os composes.
 
-# ---
+```bash
+docker network create observability
+```
 
-# 
+> ⚠️ Esse comando precisa ser executado **apenas uma vez**.
 
-# \## 🧠 Aspire vs Docker Compose (Resumo Rápido)
+---
 
-# 
+### 📊 Subindo a Stack de Observabilidade
 
-# | Aspecto | Aspire | Docker + OTEL |
+Entre no diretório de observabilidade:
 
-# |------|------|------|
+```bash
+cd docker/observability
 
-# | Setup inicial | 🔥 Muito simples | 🧩 Mais verboso |
+docker compose up -d
+```
 
-# | Observabilidade | Automática | Manual |
+Serviços que serão iniciados:
 
-# | Controle fino | Médio | Alto |
+- Grafana → http://localhost:3000
+- Tempo → http://localhost:3200
+- OpenTelemetry Collector
+- Prometheus
+- Loki
 
-# | Infra explícita | Não | Sim |
+---
 
-# | Ideal para | Dev / POC | Produção / Estudo profundo |
+### 🧪 Subindo a API
 
-# 
+Em outro terminal:
 
-# ---
+```bash
+cd docker/api
 
-# 
+docker compose up -d --build
+```
 
-# \## 🚀 Rodando o Projeto com .NET Aspire
+A API irá:
 
-# 
+- Conectar no PostgreSQL e Redis
+- Enviar traces para o **OpenTelemetry Collector**
+- Exportar traces para o **Grafana Tempo**
 
-# \### Pré-requisitos
+---
 
-# \- .NET SDK 10
+## 📈 Visualizando os Traces no Grafana
 
-# \- Docker
+1. Acesse: http://localhost:3000
+2. Vá em **Explore**
+3. Selecione o datasource **Tempo**
+4. Clique em **Run Query** (ou filtre por "service.name")
 
-# \- .NET Aspire workload instalado
+Você deverá ver os traces das chamadas da API.
 
-# 
+---
 
-# \### Passos
+## 🛠️ Comandos Úteis do Docker
 
-# 
+### Subir um compose com build
 
-# ```bash
+```bash
+docker compose up -d --build
+```
 
-# dotnet workload install aspire
+### Derrubar containers e volumes
 
-# dotnet run --project GameStore.AppHost
+```bash
+docker compose down -v
+```
 
-# ```
+### Ver containers em execução
 
-# 
+```bash
+docker ps
+```
 
-# O Aspire irá:
+### Ver logs de um serviço específico
 
-# \- Subir automaticamente os serviços
+```bash
+docker compose logs api
+```
 
-# \- Configurar observabilidade (traces, metrics e logs)
+### Seguir logs em tempo real
 
-# \- Disponibilizar o \*\*Aspire Dashboard\*\*
+```bash
+docker compose logs -f otel-collector
+```
 
-# 
+### Parar tudo rapidamente
 
-# 📌 \*\*Nenhuma configuração manual de OpenTelemetry é necessária nesse modo\*\*.
+```bash
+docker stop $(docker ps -q)
+```
 
-# 
+---
 
-# ---
+## 📌 Estrutura do Repositório (Simplificada)
 
-# 
+```text
+/
+├── GameStore.Api
+├── docker/
+│ ├── api/
+│ │ └── docker-compose.yml
+│ └── observability/
+│ ├── docker-compose.yml
+│ ├── otel-collector.yml
+│ └── tempo.yml
+└── README.md
+```
 
-# \## 🐳 Rodando o Projeto com Docker Compose + OpenTelemetry
+---
 
-# 
+## 🧭 Próximos Passos (Roadmap)
 
-# Neste modo, toda a observabilidade é configurada \*\*explicitamente\*\*, sem Aspire.
+- [ ] Instrumentar **logs com OpenTelemetry + Loki**
+- [ ] Instrumentar **métricas com Prometheus**
+- [ ] Correlação Logs ↔ Traces
+- [ ] Dashboards customizados no Grafana
+- [ ] Comparação de custo e complexidade Aspire vs Docker
 
-# 
+---
 
-# \### 📌 Passo 0 – Criar a network (executar apenas uma vez)
+## 🧠 Conclusão
 
-# 
+Este projeto existe para mostrar que:
 
-# Este projeto usa uma \*\*network Docker externa compartilhada\*\* entre os composes.
-
-# 
-
-# ```bash
-
-# docker network create observability
-
-# ```
-
-# 
-
-# > ⚠️ Esse comando precisa ser executado \*\*apenas uma vez\*\*.
-
-# 
-
-# ---
-
-# 
-
-# \### 📊 Subindo a Stack de Observabilidade
-
-# 
-
-# Entre no diretório de observabilidade:
-
-# 
-
-# ```bash
-
-# cd docker/observability
-
-# docker compose up -d
-
-# ```
-
-# 
-
-# Serviços que serão iniciados:
-
-# \- Grafana → http://localhost:3000
-
-# \- Tempo → http://localhost:3200
-
-# \- OpenTelemetry Collector
-
-# \- Prometheus
-
-# \- Loki
-
-# 
-
-# ---
-
-# 
-
-# \### 🧪 Subindo a API
-
-# 
-
-# Em outro terminal:
-
-# 
-
-# ```bash
-
-# cd docker/api
-
-# docker compose up -d --build
-
-# ```
-
-# 
-
-# A API irá:
-
-# \- Conectar no PostgreSQL e Redis
-
-# \- Enviar traces para o \*\*OpenTelemetry Collector\*\*
-
-# \- Exportar traces para o \*\*Grafana Tempo\*\*
-
-# 
-
-# ---
-
-# 
-
-# \## 📈 Visualizando os Traces no Grafana
-
-# 
-
-# 1\. Acesse: http://localhost:3000
-
-# 2\. Vá em \*\*Explore\*\*
-
-# 3\. Selecione o datasource \*\*Tempo\*\*
-
-# 4\. Clique em \*\*Run Query\*\* (ou filtre por `service.name`)
-
-# 
-
-# Você deverá ver os traces das chamadas da API.
-
-# 
-
-# ---
-
-# 
-
-# \## 🛠️ Comandos Úteis do Docker
-
-# 
-
-# \### Subir um compose com build
-
-# ```bash
-
-# docker compose up -d --build
-
-# ```
-
-# 
-
-# \### Derrubar containers e volumes
-
-# ```bash
-
-# docker compose down -v
-
-# ```
-
-# 
-
-# \### Ver containers em execução
-
-# ```bash
-
-# docker ps
-
-# ```
-
-# 
-
-# \### Ver logs de um serviço específico
-
-# ```bash
-
-# docker compose logs api
-
-# ```
-
-# 
-
-# \### Seguir logs em tempo real
-
-# ```bash
-
-# docker compose logs -f otel-collector
-
-# ```
-
-# 
-
-# \### Parar tudo rapidamente
-
-# ```bash
-
-# docker stop $(docker ps -q)
-
-# ```
-
-# 
-
-# ---
-
-# 
-
-# \## 📌 Estrutura do Repositório (Simplificada)
-
-# 
-
-# ```text
-
-# /
-
-# ├── GameStore.Api
-
-# ├── docker/
-
-# │   ├── api/
-
-# │   │   └── docker-compose.yml
-
-# │   └── observability/
-
-# │       ├── docker-compose.yml
-
-# │       ├── otel-collector.yml
-
-# │       └── tempo.yml
-
-# └── README.md
-
-# ```
-
-# 
-
-# ---
-
-# 
-
-# \## 🧭 Próximos Passos (Roadmap)
-
-# 
-
-# \- \[ ] Instrumentar \*\*logs com OpenTelemetry + Loki\*\*
-
-# \- \[ ] Instrumentar \*\*métricas com Prometheus\*\*
-
-# \- \[ ] Correlação Logs ↔ Traces
-
-# \- \[ ] Dashboards customizados no Grafana
-
-# \- \[ ] Comparação de custo e complexidade Aspire vs Docker
-
-# 
-
-# ---
-
-# 
-
-# \## 🧠 Conclusão
-
-# 
-
-# Este projeto existe para mostrar que:
-
-# 
-
-# \- Aspire acelera muito o desenvolvimento
-
-# \- Docker + OpenTelemetry dão controle total
-
-
-
+- Aspire acelera muito o desenvolvimento
+- Docker + OpenTelemetry dão controle total
