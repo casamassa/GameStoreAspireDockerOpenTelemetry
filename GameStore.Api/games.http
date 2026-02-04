@@ -1,13 +1,11 @@
-@HostAddress = localhost:5239
+###
+GET http://localhost:5239/games
 
 ###
-GET {{HostAddress}}/games
+GET http://localhost:5239/games/1
 
 ###
-GET {{HostAddress}}/games/1
-
-###
-POST {{HostAddress}}/games
+POST http://localhost:5239/games
 Content-Type: application/json
 
 {
@@ -18,7 +16,7 @@ Content-Type: application/json
 }
 
 ###
-PUT {{HostAddress}}/games/3
+PUT http://localhost:5239/games/3
 Content-Type: application/json
 
 {
@@ -29,10 +27,10 @@ Content-Type: application/json
 }
 
 ###
-DELETE {{HostAddress}}/games/3
+DELETE http://localhost:5239/games/3
 
 ###
-GET {{HostAddress}}/alive
+GET http://localhost:5239/alive
 
 ###
-GET {{HostAddress}}/health
+GET http://localhost:5239/health
